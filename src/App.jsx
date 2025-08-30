@@ -1,34 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react'
+import VoiceRecorder from './components/VoiceRecorder'
+import CalendarView from './components/CalendarView'
+import EventList from './components/EventList'
+import Header from './components/Header'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [events, setEvents] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [transcript, setTranscript] = useState('')
+
+  const handleNewEvent = (newEvent) => {
+    setEvents(prev => [...prev, { ...newEvent, id: Date.now() }])
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Header />
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column - Voice Interface */}
+          <div className="space-y-6">
+            <VoiceRecorder 
+              onNewEvent={handleNewEvent}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+              transcript={transcript}
+              setTranscript={setTranscript}
+            />
+            
+            {events.length > 0 && (
+              <EventList events={events} />
+            )}
+          </div>
+
+          {/* Right Column - Calendar View */}
+          <div className="lg:col-span-1">
+            <CalendarView events={events} />
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
